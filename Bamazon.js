@@ -38,7 +38,7 @@ function openDatabase() {
     // Your username
     user: "root",
     // Your password
-    password: "danito66$",
+    password: "",
     database: "bamazonDB"
   });
   
