@@ -28,6 +28,7 @@ var inquirer = require("inquirer");
 var connection;
 
 var itemToOrder;
+var orderItem;
 
 
 function openDatabase() {
@@ -38,7 +39,7 @@ function openDatabase() {
     // Your username
     user: "root",
     // Your password
-    password: "danito66$",
+    password: "",
     database: "bamazonDB"
   });
   
@@ -56,13 +57,6 @@ function readProducts() {
     if (err) throw err;
     // Log all results of the SELECT statement
     console.log(JSON.parse(JSON.stringify(res)))
-    //or we can put this for loop somewhere else or query it again. I need to get price out of the database somewhere and store it. 
-    //for (var i = 0; i < 10; i++) {
-    //console.log(JSON.parse(JSON.stringify(res[i].price)));
-    //let itemPrice = res[i].price; //this only stores the last item in the data bases's price 
-    //console.log(itemPrice);
-  //}
-    //connection.end();
     orderNumber();
   });
 }
@@ -76,7 +70,7 @@ function orderNumber() {
       
     }])
     .then(function(answer) {
-     let orderItem = answer.itemNumber;
+    orderItem = answer.itemNumber;
         console.log(orderItem);
         orderQuantity();
   });
@@ -93,55 +87,32 @@ function orderNumber() {
         console.log(answer.stockQuantity);//this is the quantity the customer wants
         console.log("      ");
         console.log("Your order is being placed. Please wait a few minutes while Bamazon processes it.")
-        //var cost = (answer.stockQuantity * itemPrice);
-        //console.log("The cost is " + cost); 
-        //opendatabase(); 
-        connection.query("SELECT ITEMNUMBER, STOCK_QUANTITY FROM products WHERE ITEMNUMBER = 8675309", function(err, res) {
-          if (err) throw err;
-          console.log(JSON.stringify(res));
-          if (answer.stock_quanity < 1) {
-            console.log("Insufficient quantity! Please choose a different item")
-        }
-        else {
-          console.log("Your order has been placed");
-          var randomNumber = Math.floor(Math.random() * 1000);
-          console.log("Your order number is" + randomNumber) //random number generator )
-        }
-        })
-        connection.end();
-    });
-  }
+        var cost = (answer.stockQuantity * itemPrice);
+        console.log("The cost is " + cost); 
+      
+        console.log(orderItem);
+        connection.query("Select * FROM products where ITEMNUMBER="+ orderItem, function (err, res){
+      
+          if (answer.stockQuantity > res[0].stock_quantity){
+            console.log("Insufficient quantity! Please choose a different quantity")
+          
 
-  // function orderVerification() {
-  //   openDatabase();
-
-    //connection.query("SELECT ITEMNUMBER, STOCK_QUANTITY FROM products WHERE ITEMNUMBER LIKE " + answer.itemNumber, function(err, res) { 
-      //if (err) throw err;
-      //console.log(JSON.parse(JSON.stringify(res[i].price)));
-      // Log all results of the SELECT statement
-      // for (var i = 0; i < 9; i++) {
-      //   var res = res[i];
-      // console.log("getting data out of the array", res.ITEMNUMBER);
-      //console.log(itemToOrder); 
-     
-
-//i need a little help with this one 
-    function updateProduct() {
-      console.log("Updating the in-store quantities remaining...\n");
-      opendatabase();
-      var query = connection.query(
-        "UPDATE products SET ? WHERE ?",
-        [
-          {
-            stockQuantity: -1
           }
-        ],
-        function(err, res) {
-          console.log(res.affectedRows + " products updated!\n");
-        }
-      );
+          else{
+          console.log("Your order has been placed");
+          var newQty=(res[0].stock_quantity - answer.stockQuantity);
+          console.log("the new quantity in the database is  " + newQty);
+          connection.query("Update Products set stock_quantity = " + newQty,'where itemnumber ='+orderItem,function (err, res){
+            var randomNumber = Math.floor(Math.random() * 1000);
+          console.log("Your order number is" + randomNumber) //random number generator )
+           console.log("Thanks for your order!"); 
+            })
+            
+          connection.end();
+          }
+        })
+      
+        })
+ }
+}
     
-      // logs the actual query being run
-      console.log(query.sql);
-    }
-  }
