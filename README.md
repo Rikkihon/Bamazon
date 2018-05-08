@@ -1,3 +1,4 @@
+
 # Bamazon
 This program will display the items for sale.  The user will enter the order number they'd like to buy and the quantity. 
 The system will check to see if that quantity is available and then order it for the user, while displaying the order number and the price. 
