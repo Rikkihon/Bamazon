@@ -62,7 +62,7 @@ function readProducts() {
     //let itemPrice = res[i].price; //this only stores the last item in the data bases's price 
     //console.log(itemPrice);
   //}
-    connection.end();
+    //connection.end();
     orderNumber();
   });
 }
@@ -76,8 +76,8 @@ function orderNumber() {
       
     }])
     .then(function(answer) {
-     let orderItem = answer.input;
-        console.log(answer.itemNumber);
+     let orderItem = answer.itemNumber;
+        console.log(orderItem);
         orderQuantity();
   });
     function orderQuantity() {
@@ -95,10 +95,11 @@ function orderNumber() {
         console.log("Your order is being placed. Please wait a few minutes while Bamazon processes it.")
         //var cost = (answer.stockQuantity * itemPrice);
         //console.log("The cost is " + cost); 
-        opendatabase(); 
-        connection.query("SELECT ITEMNUMBER, STOCK_QUANTITY FROM products WHERE ITEMNUMBER LIKE 'answer.itemNumber'", function(err, res) {
+        //opendatabase(); 
+        connection.query("SELECT ITEMNUMBER, STOCK_QUANTITY FROM products WHERE ITEMNUMBER = 8675309", function(err, res) {
           if (err) throw err;
-          if (stock_quanity < 1) {
+          console.log(JSON.stringify(res));
+          if (answer.stock_quanity < 1) {
             console.log("Insufficient quantity! Please choose a different item")
         }
         else {
