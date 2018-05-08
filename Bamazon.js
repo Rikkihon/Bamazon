@@ -29,6 +29,7 @@ var connection;
 
 var itemToOrder;
 
+
 function openDatabase() {
   connection = mysql.createConnection({
     host: "localhost",
@@ -55,12 +56,17 @@ function readProducts() {
   connection.query("SELECT product_name, itemnumber, price FROM products", function(err, res) { 
     if (err) throw err;
     // Log all results of the SELECT statement
-    console.log(res);
+    console.log(JSON.parse(JSON.stringify(res)))
+    //or we can put this for loop somewhere else or query it again. I need to get price out of the database somewhere and store it. 
+    for (var i = 0; i < 10; i++) {
+    //console.log(JSON.parse(JSON.stringify(res[i].price)));
+    let itemPrice = res[i].price; //this only stores the last item in the data bases's price 
+    console.log(itemPrice);
+  }
     connection.end();
     orderNumber();
   });
 }
-
 function orderNumber() {
   inquirer
     .prompt([
@@ -73,10 +79,8 @@ function orderNumber() {
     .then(function(answer) {
      let orderItem = answer.input;
         console.log(answer.itemNumber);
-        itemToOrder = answer.itemNumber;
         //orderQuantity();
-   });
-
+  });
     //function orderQuantity() {
     inquirer
     .prompt([
@@ -87,38 +91,41 @@ function orderNumber() {
       }
     ])
     .then(function(answer) {
-        console.log(answer.stockQuantity);
-        let orderQuantity = answer.stock_QUANTITY;
-        console.log(orderQuantity);
+        console.log(answer.stockQuantity);//this is the quantity the customer wants
         console.log("      ");
         console.log("Your order is being placed. Please wait a few minutes while Bamazon processes it.")
-        orderVerification();
+        var cost = (answer.stockQuantity * itemPrice);
+        console.log("The cost is " + cost); 
+        opendatabase(); 
+        connection.query("SELECT ITEMNUMBER, STOCK_QUANTITY FROM products WHERE ITEMNUMBER LIKE " + answer.itemNumber, function(err, res) {
+          if (err) throw err;
+          if (stock_quanity < 1) {
+            console.log("Insufficient quantity! Please choose a different item")
+        }
+        else {
+          console.log("Your order has been placed");
+          var randomNumber = Math.floor(Math.random() * 1000);
+          console.log("Your order number is" + randomNumber) //random number generator )
+        }
+        })
+        connection.end();
     });
-  }//)
+  }
 
-  function orderVerification() {
-    openDatabase();
+  // function orderVerification() {
+  //   openDatabase();
 
-    connection.query("SELECT ITEMNUMBER, stock_QUANTITY FROM products", function(err, res) { 
-      if (err) throw err;
-      console.log(res);
+    //connection.query("SELECT ITEMNUMBER, STOCK_QUANTITY FROM products WHERE ITEMNUMBER LIKE " + answer.itemNumber, function(err, res) { 
+      //if (err) throw err;
+      //console.log(JSON.parse(JSON.stringify(res[i].price)));
       // Log all results of the SELECT statement
-      for (var i = 0; i < 9; i++) {
-        var res = res[i];
-      console.log("getting data out of the array", res.ITEMNUMBER);
-      //console.log(itemToOrder);
-      //console.log("wheeeee " + res);
-      //console.log(res[0].ITEMNUMBER);  
+      // for (var i = 0; i < 9; i++) {
+      //   var res = res[i];
+      // console.log("getting data out of the array", res.ITEMNUMBER);
+      //console.log(itemToOrder); 
+     
 
-      if (stock_quanity < 1) {
-        console.log("Insufficient quantity! Please choose a different item")
-      }
-
-      console.log("Your order has been placed");
-      console.log("The cost of this order is" price * quantity)
-      connection.end();
-      })
-    };
+//i need a little help with this one 
     function updateProduct() {
       console.log("Updating the in-store quantities remaining...\n");
       opendatabase();
@@ -136,5 +143,5 @@ function orderNumber() {
     
       // logs the actual query being run
       console.log(query.sql);
-    }  
+    }}
   
