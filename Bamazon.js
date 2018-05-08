@@ -38,13 +38,12 @@ function openDatabase() {
     // Your username
     user: "root",
     // Your password
-    password: "",
+    password: "danito66$",
     database: "bamazonDB"
   });
   
   connection.connect(function(err) {
     if (err) throw err;
-    console.log("connected as id " + connection.threadId + "\n");
   });  
 }
 
@@ -58,11 +57,11 @@ function readProducts() {
     // Log all results of the SELECT statement
     console.log(JSON.parse(JSON.stringify(res)))
     //or we can put this for loop somewhere else or query it again. I need to get price out of the database somewhere and store it. 
-    for (var i = 0; i < 10; i++) {
+    //for (var i = 0; i < 10; i++) {
     //console.log(JSON.parse(JSON.stringify(res[i].price)));
-    let itemPrice = res[i].price; //this only stores the last item in the data bases's price 
-    console.log(itemPrice);
-  }
+    //let itemPrice = res[i].price; //this only stores the last item in the data bases's price 
+    //console.log(itemPrice);
+  //}
     connection.end();
     orderNumber();
   });
@@ -79,9 +78,9 @@ function orderNumber() {
     .then(function(answer) {
      let orderItem = answer.input;
         console.log(answer.itemNumber);
-        //orderQuantity();
+        orderQuantity();
   });
-    //function orderQuantity() {
+    function orderQuantity() {
     inquirer
     .prompt([
       {
@@ -94,10 +93,10 @@ function orderNumber() {
         console.log(answer.stockQuantity);//this is the quantity the customer wants
         console.log("      ");
         console.log("Your order is being placed. Please wait a few minutes while Bamazon processes it.")
-        var cost = (answer.stockQuantity * itemPrice);
-        console.log("The cost is " + cost); 
+        //var cost = (answer.stockQuantity * itemPrice);
+        //console.log("The cost is " + cost); 
         opendatabase(); 
-        connection.query("SELECT ITEMNUMBER, STOCK_QUANTITY FROM products WHERE ITEMNUMBER LIKE " + answer.itemNumber, function(err, res) {
+        connection.query("SELECT ITEMNUMBER, STOCK_QUANTITY FROM products WHERE ITEMNUMBER LIKE 'answer.itemNumber'", function(err, res) {
           if (err) throw err;
           if (stock_quanity < 1) {
             console.log("Insufficient quantity! Please choose a different item")
@@ -143,5 +142,5 @@ function orderNumber() {
     
       // logs the actual query being run
       console.log(query.sql);
-    }}
-  
+    }
+  }
